@@ -10,13 +10,15 @@ import static groovyx.net.http.ContentType.JSON
         version='0.7.1')
 
 def processorName = 'Save File'
-def desiredState = "STOPPED"
-def createMissingDirs = true
-
-def nifi = new RESTClient('http://agrande-nifi-1:9090/nifi-api/')
+def host = 'agrande-nifi-1'
+def port = 9090
+def nifi = new RESTClient("http://$host:$port/nifi-api/")
 
 println 'Looking up a component to update...'
-def resp = nifi.get(path: 'controller/search-results', query: [q: processorName])
+def resp = nifi.get(
+    path: 'controller/search-results',
+    query: [q: processorName]
+)
 assert resp.status == 200
 assert resp.data.searchResultsDTO.processorResults.size() == 1
 // println prettyPrint(toJson(resp.data))
@@ -43,9 +45,9 @@ builder {
     }
 }
 resp = nifi.put(
-        path: "controller/process-groups/$processGroup/processors/$processorId",
-        body: builder.toPrettyString(),
-        requestContentType: JSON
+    path: "controller/process-groups/$processGroup/processors/$processorId",
+    body: builder.toPrettyString(),
+    requestContentType: JSON
 )
 assert resp.status == 200
 
@@ -62,7 +64,7 @@ builder {
         config {
             properties {
                 'Directory' '/tmp/staging'
-                'Create Missing Directories' "$createMissingDirs"
+                'Create Missing Directories' 'true'
             }
         }
     }
@@ -71,9 +73,9 @@ builder {
 println "Updating processor...\n${builder.toPrettyString()}"
 
 resp = nifi.put(
-        path: "controller/process-groups/$processGroup/processors/$processorId",
-        body: builder.toPrettyString(),
-        requestContentType: JSON
+    path: "controller/process-groups/$processGroup/processors/$processorId",
+    body: builder.toPrettyString(),
+    requestContentType: JSON
 )
 assert resp.status == 200
 
@@ -94,9 +96,9 @@ builder {
     }
 }
 resp = nifi.put(
-        path: "controller/process-groups/$processGroup/processors/$processorId",
-        body: builder.toPrettyString(),
-        requestContentType: JSON
+    path: "controller/process-groups/$processGroup/processors/$processorId",
+    body: builder.toPrettyString(),
+    requestContentType: JSON
 )
 assert resp.status == 200
 
