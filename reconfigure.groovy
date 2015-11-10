@@ -99,3 +99,5 @@ resp = nifi.put(
         requestContentType: JSON
 )
 assert resp.status == 200
+
+println 'Ok'
