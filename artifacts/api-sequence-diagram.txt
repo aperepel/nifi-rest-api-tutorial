@@ -1,0 +1,47 @@
+title NiFi API Workflow
+
+Alice->+NiFi: GET controller/revision
+NiFi-->-Alice: version: 100, clientId: Charlie
+
+Bob->+NiFi: GET controller/revision
+NiFi-->-Bob: version: 100, clientId: Charlie
+
+note right of NiFi:
+clientId - last user
+to update the flow\n
+end note
+
+Alice->+NiFi: PUT /processorId
+
+note right of Alice:
+  clientId - Alice
+  version - 100
+end note
+
+NiFi->+State: check versions
+State-->-NiFi: versions matched
+
+    NiFi->+State: apply changes
+    State-->-NiFi: bump version
+
+    NiFi-->-Alice: OK 200
+    note left of NiFi:
+      version: 101
+      clientId: Alice
+    end note
+
+
+Bob->+NiFi: PUT /processorId
+
+note left of Bob:
+  clientId - Bob
+  version - 100
+end note
+
+    NiFi->+State: check versions
+    State-->-NiFi: versions didn't match
+
+NiFi-->-Bob: Oops, 409
+
+Alice->Alice: profit
+
