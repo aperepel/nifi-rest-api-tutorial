@@ -10,7 +10,8 @@ import static groovyx.net.http.ContentType.JSON
         version='0.7.1')
 
 def processorName = 'Save File'
-def host = 'agrande-nifi-1'
+def host = 'localhost'
+//def host = 'agrande-nifi-1'
 def port = 9090
 def nifi = new RESTClient("http://$host:$port/nifi-api/")
 
